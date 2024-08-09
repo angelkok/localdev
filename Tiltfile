@@ -18,7 +18,10 @@ docker_build('node-service', 'node-service',
 k8s_resource('python-service-deploy', port_forwards='8000:8000')
 k8s_resource('node-service-deploy', port_forwards=['8001:8001',  # app port
                                                    '9229:9229']) # debugger port
-
+# redis
 docker_compose('docker-compose-redis.yaml')
 dc_resource('redis', labels=["redis"])
 
+# database
+v1alpha1.extension_repo('basedir', url='file://{}'.format(config.main_dir))
+v1alpha1.extension('database', repo_name='basedir', repo_path='database', args=['--database', 'postgres'])
