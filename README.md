@@ -6,6 +6,11 @@ The setup shows how to use `tilt` to deploy services to a local kubernetes clust
 #### Sample services
 - Node.js
 - Python
+- Rails
+
+#### Data 
+- Redis
+- Postgress
 
 ### Setup
 This setup assumes WSL2 environment, and the following pre-reqs:
@@ -32,3 +37,4 @@ kubectl get pod
 kubectl exec -t POD_ID
 ```
 
+Rails/Postgress setup from (https://github.com/tilt-dev/tilted-rails) 
