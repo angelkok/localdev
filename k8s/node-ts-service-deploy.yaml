@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: node-ts-service-deploy
+spec:
+  selector:
+    matchLabels:
+      service: node-ts-service
+  template:
+    metadata:
+      labels:
+        service: node-ts-service
+    spec:
+      containers:
+      - name: node-ts-service
+        image: node-ts-service
+        ports:
+          - containerPort: 8002
+          - containerPort: 9229
