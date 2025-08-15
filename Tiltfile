@@ -45,5 +45,5 @@ v1alpha1.extension_repo('basedir', url='file://{}'.format(config.main_dir))
 v1alpha1.extension('database', repo_name='basedir', repo_path='database', args=['--database', 'postgres'])
 
 # rails
-load('./rails/Tiltfile', 'rails_app')
-rails_app('rails-app', '--database=postgresql')
+# load('./rails/Tiltfile', 'rails_app')
+# rails_app('rails-app', '--database=postgresql')
