@@ -4,26 +4,26 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
+
+	"github.com/gorilla/mux"
 )
 
-// helloHandler handles the incoming HTTP requests.
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-	// Set the response header to indicate the content type.
-	w.Header().Set("Content-Type", "text/plain")
-	// Write the response body.
-	fmt.Fprint(w, "Hello from your Go service!")
-}
+var cb = NewCircuitBreaker(3, 5*time.Second)
 
 func main() {
-	// Register the handler function for the root URL path ("/").
-	http.HandleFunc("/", helloHandler)
+	go cleanupVisitors()
 
-	// Define the port the server will listen on.
+	r := mux.NewRouter()
+	r.HandleFunc("/", helloHandler)
+
+	api := r.PathPrefix("/api/v1").Subrouter()
+	api.Handle("/users/{id}", rateLimitMiddleware(http.HandlerFunc(userHandler))).Methods("GET")
+
 	port := ":8083"
 	fmt.Printf("Server starting on port %s\n", port)
 
-	// Start the HTTP server. log.Fatal will print any error and exit the program.
-	if err := http.ListenAndServe(port, nil); err != nil {
+	if err := http.ListenAndServe(port, r); err != nil {
 		log.Fatal(err)
 	}
-}
+}
