@@ -3,6 +3,7 @@
 # load kubernetes manifest
 k8s_yaml(['k8s/python-service-deploy.yaml',
         # 'k8s/node-service-deploy.yaml',
+          'k8s/go-service-deploy.yaml',
           'k8s/node-ts-service-deploy.yaml'])
 # works with helm k8s_yaml(helm('chart_dir'))
 
@@ -22,6 +23,9 @@ docker_build('node-ts-service', 'node-ts-service',
                                                      # the service when files are changed
              build_args={'node_env': 'development'}) # get access to dev tools in package.json
 
+docker_build('go-service', 'go-service')
+
+
 # setu port forwarding: matches resource yaml meta name
 k8s_resource('python-service-deploy', port_forwards='8000:8000')
 
@@ -30,6 +34,9 @@ k8s_resource('python-service-deploy', port_forwards='8000:8000')
 
 k8s_resource('node-ts-service-deploy', port_forwards=['8002:8001',  # app port
                                                    '9229:9229']) # debugger port
+
+k8s_resource('go-service-deploy', port_forwards='8083:8083')
+
 # redis
 # Load the 'deployment' extension
 load('ext://deployment', 'deployment_create')

@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: go-service-deploy
+spec:
+  selector:
+    matchLabels:
+      service: go-service
+  template:
+    metadata:
+      labels:
+        service: go-service
+    spec:
+      containers:
+      - name: go-service
+        image: go-service
+        ports:
+          - containerPort: 8083
