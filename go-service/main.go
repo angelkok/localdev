@@ -20,7 +20,7 @@ func main() {
 	api := r.PathPrefix("/api/v1").Subrouter()
 	api.Handle("/users/{id}", rateLimitMiddleware(http.HandlerFunc(userHandler))).Methods("GET")
 
-	port := ":8083"
+	port := ":8000"
 	fmt.Printf("Server starting on port %s\n", port)
 
 	if err := http.ListenAndServe(port, r); err != nil {

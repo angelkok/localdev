@@ -15,4 +15,4 @@ spec:
       - name: go-service
         image: go-service
         ports:
-          - containerPort: 8083
+          - containerPort: 8003
