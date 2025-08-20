@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func userHandler(w http.ResponseWriter, r *http.Request) {
+func userHandlerV2(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
@@ -33,7 +33,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func userHandlerV2(w http.ResponseWriter, r *http.Request) {
+func userHandlerV1(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 

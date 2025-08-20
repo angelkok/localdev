@@ -17,11 +17,11 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", helloHandler)
 
-	apiV1 := r.PathPrefix("/api/v1").Subrouter()
-	apiV1.Handle("/users/{id}", rateLimitMiddleware(http.HandlerFunc(userHandler))).Methods("GET")
-
 	apiV2 := r.PathPrefix("/api/v2").Subrouter()
-	apiV2.HandleFunc("/users/{id}", userHandlerV2).Methods("GET")
+	apiV2.Handle("/users/{id}", rateLimitMiddleware(http.HandlerFunc(userHandlerV2))).Methods("GET")
+
+	apiV1 := r.PathPrefix("/api/v1").Subrouter()
+	apiV1.HandleFunc("/users/{id}", userHandlerV2).Methods("GET")
 
 
 	port := ":8000"
