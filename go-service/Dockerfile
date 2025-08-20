@@ -23,8 +23,8 @@ RUN go mod tidy
 # -ldflags="-w -s" strips debugging information to reduce binary size.
 RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags="-w -s" -o /app/main .
 
-#ENTRYPOINT ["/app/main"]
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+ENTRYPOINT ["/app/main"]
+#ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 # # --- Final Stage ---
 # # Use a minimal base image for the final container.
