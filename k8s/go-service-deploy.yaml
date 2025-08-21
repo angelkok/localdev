@@ -16,3 +16,6 @@ spec:
         image: go-service
         ports:
           - containerPort: 8003
+        envFrom:
+          - configMapRef:
+              name: database-config-services

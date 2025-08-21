@@ -32,7 +32,7 @@ RUN bundle install
                         'image': name+':tag',
                         'imagePullPolicy': 'Always',
                         'command': ['rails', 'server'],
-                        'envFrom': [{'configMapRef': {'name': 'database-config'}}]
+                        'envFrom': [{'configMapRef': {'name': 'database-config-services'}}]
                     }]
                 }
             }

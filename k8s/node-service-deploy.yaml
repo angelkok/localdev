@@ -17,3 +17,6 @@ spec:
         ports:
           - containerPort: 8001
           - containerPort: 9229
+        envFrom:
+          - configMapRef:
+              name: database-config-services

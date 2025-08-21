@@ -16,3 +16,6 @@ spec:
         image: python-service
         ports:
           - containerPort: 8000
+        envFrom:
+          - configMapRef:
+              name: database-config-services

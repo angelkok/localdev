@@ -64,3 +64,8 @@ v1alpha1.extension('database', repo_name='basedir', repo_path='database', args=[
 # rails
 # load('./rails/Tiltfile', 'rails_app')
 # rails_app('rails-app', '--database=postgresql')
+
+# services database
+k8s_yaml('database/volume-services.yaml')
+k8s_yaml('database/postgres-services.yaml')
+k8s_resource('postgress-services', port_forwards=['5433:5432'])

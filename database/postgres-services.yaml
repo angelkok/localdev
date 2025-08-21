@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: database-config-services
+data:
+  POSTGRES_DB: "services_development"
+  POSTGRES_USER: "services"
+  POSTGRES_PASSWORD: "services_password"
+  RAILS_DATABASE_URL: "postgres://rails_user:rails_password@postgres-services:5432/rails_service_db"
+  GO_DATABASE_URL: "postgres://go_user:go_password@postgres-services:5432/go_service_db?sslmode=disable"
+  PYTHON_DATABASE_URL: "postgres://python_user:python_password@postgres-services:5432/python_service_db"
+  NODE_DATABASE_URL: "postgres://node_user:node_password@postgres-services:5432/node_service_db"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-db-services
+data:
+  init-db.sh: |
+    #!/bin/bash
+    set -e
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+        CREATE USER rails_user WITH PASSWORD 'rails_password';
+        CREATE DATABASE rails_service_db;
+        GRANT ALL PRIVILEGES ON DATABASE rails_service_db TO rails_user;
+
+        CREATE USER go_user WITH PASSWORD 'go_password';
+        CREATE DATABASE go_service_db;
+        GRANT ALL PRIVILEGES ON DATABASE go_service_db TO go_user;
+
+        CREATE USER python_user WITH PASSWORD 'python_password';
+        CREATE DATABASE python_service_db;
+        GRANT ALL PRIVILEGES ON DATABASE python_service_db TO python_user;
+
+        CREATE USER node_user WITH PASSWORD 'node_password';
+        CREATE DATABASE node_service_db;
+        GRANT ALL PRIVILEGES ON DATABASE node_service_db TO node_user;
+    EOSQL
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgress-services
+  labels:
+    tier: database-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: database-services
+  template:
+    metadata:
+      labels:
+        tier: database-services
+    spec:
+      containers:
+        - name: database-services
+          image: postgres
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: database-config-services
+          ports:
+            - name: postgres
+              containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-services
+            - mountPath: /docker-entrypoint-initdb.d
+              name: postgres-initdb-services
+      volumes:
+        - name: postgres-services
+          persistentVolumeClaim:
+            claimName: database-pv-claim-services
+        - name: postgres-initdb-services
+          configMap:
+            name: postgres-init-db-services
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-services
+  labels:
+    tier: database-services
+spec:
+  type: NodePort
+  ports:
+   - port: 5432
+     protocol: TCP
+     name: postgres
+  selector:
+    tier: database-services
