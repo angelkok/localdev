@@ -1,5 +1,5 @@
 # -*- mode: Python -*-
-
+import os
 
 # Python service
 k8s_yaml('k8s/python-service-deploy.yaml')
@@ -66,6 +66,75 @@ v1alpha1.extension('database', repo_name='basedir', repo_path='database', args=[
 # rails_app('rails-app', '--database=postgresql')
 
 # services database
+# read credentials from environment variables, with defaults
+postgres_user = os.environ.get('POSTGRES_USER', 'services')
+postgres_password = os.environ.get('POSTGRES_PASSWORD', 'services_password')
+postgres_db = os.environ.get('POSTGRES_DB', 'services_development')
+
+rails_db_user = os.environ.get('RAILS_DB_USER', 'rails_user')
+rails_db_password = os.environ.get('RAILS_DB_PASSWORD', 'rails_password')
+rails_db_name = os.environ.get('RAILS_DB_NAME', 'rails_service_db')
+
+go_db_user = os.environ.get('GO_DB_USER', 'go_user')
+go_db_password = os.environ.get('GO_DB_PASSWORD', 'go_password')
+go_db_name = os.environ.get('GO_DB_NAME', 'go_service_db')
+
+python_db_user = os.environ.get('PYTHON_DB_USER', 'python_user')
+python_db_password = os.environ.get('PYTHON_DB_PASSWORD', 'python_password')
+python_db_name = os.environ.get('PYTHON_DB_NAME', 'python_service_db')
+
+node_db_user = os.environ.get('NODE_DB_USER', 'node_user')
+node_db_password = os.environ.get('NODE_DB_PASSWORD', 'node_password')
+node_db_name = os.environ.get('NODE_DB_NAME', 'node_service_db')
+
+# dynamically generate configmaps
+db_config_map = {
+    'apiVersion': 'v1',
+    'kind': 'ConfigMap',
+    'metadata': { 'name': 'database-config-services' },
+    'data': {
+        'POSTGRES_USER': postgres_user,
+        'POSTGRES_PASSWORD': postgres_password,
+        'POSTGRES_DB': postgres_db,
+        'RAILS_DATABASE_URL': 'postgres://{}:{}@postgres-services:5432/{}'.format(rails_db_user, rails_db_password, rails_db_name),
+        'GO_DATABASE_URL': 'postgres://{}:{}@postgres-services:5432/{}?sslmode=disable'.format(go_db_user, go_db_password, go_db_name),
+        'PYTHON_DATABASE_URL': 'postgres://{}:{}@postgres-services:5432/{}'.format(python_db_user, python_db_password, python_db_name),
+        'NODE_DATABASE_URL': 'postgres://{}:{}@postgres-services:5432/{}'.format(node_db_user, node_db_password, node_db_name),
+    }
+}
+
+init_db_script = """#!/bin/bash
+set -e
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    CREATE USER {} WITH PASSWORD '{}';
+    CREATE DATABASE {};
+    GRANT ALL PRIVILEGES ON DATABASE {} TO {};
+
+    CREATE USER {} WITH PASSWORD '{}';
+    CREATE DATABASE {};
+    GRANT ALL PRIVILEGES ON DATABASE {} TO {};
+
+    CREATE USER {} WITH PASSWORD '{}';
+    CREATE DATABASE {};
+    GRANT ALL PRIVILEGES ON DATABASE {} TO {};
+
+    CREATE USER {} WITH PASSWORD '{}';
+    CREATE DATABASE {};
+    GRANT ALL PRIVILEGES ON DATABASE {} TO {};
+EOSQL
+""".format(rails_db_user, rails_db_password, rails_db_name, rails_db_name, rails_db_user,
+           go_db_user, go_db_password, go_db_name, go_db_name, go_db_user,
+           python_db_user, python_db_password, python_db_name, python_db_name, python_db_user,
+           node_db_user, node_db_password, node_db_name, node_db_name, node_db_user)
+
+init_db_config_map = {
+    'apiVersion': 'v1',
+    'kind': 'ConfigMap',
+    'metadata': { 'name': 'postgres-init-db-services' },
+    'data': { 'init-db.sh': init_db_script }
+}
+
+k8s_yaml(encode_yaml([db_config_map, init_db_config_map]))
 k8s_yaml('database/volume-services.yaml')
-k8s_yaml('database/postgres-services.yaml')
+k8s_yaml('database/postgres-services-deploy.yaml')
 k8s_resource('postgress-services', port_forwards=['5433:5432'])

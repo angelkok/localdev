@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgress-services
+  labels:
+    tier: database-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: database-services
+  template:
+    metadata:
+      labels:
+        tier: database-services
+    spec:
+      containers:
+        - name: database-services
+          image: postgres
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: database-config-services
+          ports:
+            - name: postgres
+              containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-services
+            - mountPath: /docker-entrypoint-initdb.d
+              name: postgres-initdb-services
+      volumes:
+        - name: postgres-services
+          persistentVolumeClaim:
+            claimName: database-pv-claim-services
+        - name: postgres-initdb-services
+          configMap:
+            name: postgres-init-db-services
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-services
+  labels:
+    tier: database-services
+spec:
+  type: NodePort
+  ports:
+   - port: 5432
+     protocol: TCP
+     name: postgres
+  selector:
+    tier: database-services

@@ -22,7 +22,16 @@ The setup shows how to use `tilt` to deploy services to a local kubernetes clust
 
 This setup assumes WSL2 environment, and the following pre-reqs:
 
-Tilt and Kubernetes:
+#### Database Credentials
+
+This project uses a `.env` file to manage database credentials.
+
+1.  Copy the example file: `cp .env.example .env`
+2.  Modify the values in the `.env` file as needed.
+
+Tilt will use the variables in this file to configure the services' database. If this file is not present, default values will be used.
+
+#### Tilt and Kubernetes:
 
 - Install `docker desktop`, `tilt`, `kind`, `kubectl`
 - (Upgrade tilt by re-running installer)
