@@ -16,3 +16,14 @@ spec:
         image: python-service
         ports:
           - containerPort: 8000
+        env:
+        - name: DB_HOST
+          value: "postgres-shared-postgresql" # Connect to the shared instance
+        - name: DB_USER
+          value: "python_user" # Use the dedicated user
+        - name: DB_PASSWORD
+          value: "python_password" # Use the dedicated password
+        - name: DB_NAME
+          value: "python_db" # Connect to the dedicated database
+        - name: DB_PORT
+          value: "5432"

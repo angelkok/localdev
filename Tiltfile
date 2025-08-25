@@ -64,3 +64,27 @@ v1alpha1.extension('database', repo_name='basedir', repo_path='database', args=[
 # rails
 # load('./rails/Tiltfile', 'rails_app')
 # rails_app('rails-app', '--database=postgresql')
+
+# Load the helm_resource extension to install Helm charts.
+load('ext://helm_resource', 'helm_resource', 'helm_repo')
+
+# Add the Bitnami Helm chart repository.
+helm_repo('bitnami', 'https://charts.bitnami.com/bitnami')
+
+# Define the PostgreSQL database resource using helm_resource.
+# We configure multiple databases and users using the `flags` parameter.
+helm_resource(
+    'my-postgres',
+    'bitnami/postgresql',
+    resource_deps=['bitnami'],
+    flags=[
+        '--set', 'auth.postgresPassword=postgres_password', # Superuser password
+        '--set', 'auth.database=node_db', # Create initial DB for the node service
+        '--set', 'auth.username=node_user', # Create initial user for the node service
+        '--set', 'auth.password=node_password', # Set password for the node user
+        '--set', 'postgresql.extraDatabases[0].name=python_db', # Create the python service DB
+        '--set', 'postgresql.extraDatabases[0].user=python_user', # Create the python service user
+        '--set', 'postgresql.extraDatabases[0].password=python_password', # Set password for the python user
+        '--set', 'service.port=5432'
+    ]
+)

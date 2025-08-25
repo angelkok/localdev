@@ -24,7 +24,7 @@ This setup assumes WSL2 environment, and the following pre-reqs:
 
 Tilt and Kubernetes:
 
-- Install `docker desktop`, `tilt`, `kind`, `kubectl`
+- Install `docker desktop`, `tilt`, `kind`, `kubectl`, `helm`
 - (Upgrade tilt by re-running installer)
 - Install `helm` (<https://github.com/helm/helm/blob/main/scripts/get-helm-3>)
 - Setup local registery cluster with `kind-with-registry.sh` (<https://kind.sigs.k8s.io/docs/user/local-registry/>)
@@ -58,4 +58,3 @@ kubectl exec -t POD_ID
 ```
 
 Rails/Postgress setup from (<https://github.com/tilt-dev/tilted-rails>)
-

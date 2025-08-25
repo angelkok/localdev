@@ -20,3 +20,13 @@ spec:
         env:
         - name: PORT
           value: "8002"
+        - name: DB_HOST
+          value: "postgres-shared-postgresql" # Connect to the shared instance
+        - name: DB_USER
+          value: "node_user" # Use the dedicated user
+        - name: DB_PASSWORD
+          value: "node_password" # Use the dedicated password
+        - name: DB_NAME
+          value: "node_db" # Connect to the dedicated database
+        - name: DB_PORT
+          value: "5432"
