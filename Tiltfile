@@ -15,7 +15,7 @@ docker_build('node-ts-service', 'node-ts-service',
              entrypoint="npm run dev",               # dev script runs nodemon which restarts
                                                      # the service when files are changed
              build_args={'node_env': 'development'}) # get access to dev tools in package.json
-k8s_resource('node-ts-service-deploy', port_forwards=['8002:8001',  # app port
+k8s_resource('node-ts-service-deploy', port_forwards=['8002:8002',  # app port
                                                    '9229:9229']) # debugger port
 
 
