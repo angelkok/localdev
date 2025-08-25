@@ -55,6 +55,13 @@ kubectl get pod
 
 # exec into pod give pod id
 kubectl exec -t POD_ID
+
+# list services
+kubectl get service
+
 ```
+Consider:
+- setting up `k` alias for `kubectl`
+- use `gum` to parse `kubectl` output from `kubectl get pods` for other cmds like `exec`
 
 Rails/Postgress setup from (<https://github.com/tilt-dev/tilted-rails>)

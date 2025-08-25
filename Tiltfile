@@ -74,7 +74,7 @@ helm_repo('bitnami', 'https://charts.bitnami.com/bitnami')
 # Define the PostgreSQL database resource using helm_resource.
 # We configure multiple databases and users using the `flags` parameter.
 helm_resource(
-    'my-postgres',
+    'postgres-shared',
     'bitnami/postgresql',
     resource_deps=['bitnami'],
     flags=[

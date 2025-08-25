@@ -1,7 +1,47 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import db from '../db'; // Import the database connection
+
 
 const router = Router();
 
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Retrieve a list of users
+ *     description: Fetches all users from the database.
+ *     tags: [Users]
+ *     responses:
+ *       '200':
+ *         description: A list of users.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   name:
+ *                     type: string
+ *                     example: 'Alice'
+ *                   email:
+ *                     type: string
+ *                     example: 'alice@example.com'
+ *       '500':
+ *         description: Internal Server Error.
+ */
+
+router.get('/users', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { rows } = await db.query('SELECT * FROM users');
+        res.json(rows);
+    } catch (err) {
+        next(err); // Pass errors to the error handling middleware
+    }
+});
 
 /**
  * @swagger
@@ -26,7 +66,7 @@ const router = Router();
  *
  */
 router.get('/', (req: Request, res: Response) => {
-  res.send('Node-ts-service: Hello World!!!');
+    res.send('Node-ts-service: Hello World!!!');
 });
 
 /**
@@ -54,10 +94,10 @@ router.get('/', (req: Request, res: Response) => {
  *
  */
 router.get('/status', (req: Request, res: Response) => {
-  res.json({
-    status: 'This is version 1',
-    timestamp: new Date().toISOString(),
-  });
+    res.json({
+        status: 'This is version 1',
+        timestamp: new Date().toISOString(),
+    });
 });
 
 /**
@@ -83,7 +123,7 @@ router.get('/status', (req: Request, res: Response) => {
  *                     example: 'This is a simulated error!'
  */
 router.get('/error', (req: Request, res: Response, next: NextFunction) => {
-  next(new Error('This is a simulated error!'));
+    next(new Error('This is a simulated error!'));
 });
 
 export default router;
