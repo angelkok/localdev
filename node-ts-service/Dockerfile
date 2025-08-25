@@ -6,6 +6,7 @@ ENV NODE_ENV ${node_env}
 WORKDIR /app
 COPY package*.json .
 RUN npm install
+RUN npm i --save-dev @types/swagger-jsdoc
 COPY . .
 
 FROM base as production
