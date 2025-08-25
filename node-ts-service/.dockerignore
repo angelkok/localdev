@@ -1,0 +1,14 @@
+# .dockerignore
+
+# Ignore environment files
+.env
+.env.*
+
+# Ignore node modules (these should be installed inside the container)
+node_modules
+
+# Ignore logs
+npm-debug.log
+
+# Ignore build artifacts
+dist
